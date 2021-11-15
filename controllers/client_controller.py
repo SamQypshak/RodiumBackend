@@ -1,11 +1,6 @@
-import threading
 import uuid
-from typing import List
-
 from pydantic.main import BaseModel
 from sqlalchemy import Column, String, desc, Boolean, Integer
-from sqlalchemy.orm import declarative_base
-
 from database import Base
 
 
