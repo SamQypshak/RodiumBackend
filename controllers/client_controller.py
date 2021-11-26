@@ -153,3 +153,23 @@ def rec_getNextParent(session,groups,id):
     for row in res:
         groups.append({"name":row.name,"id":row.id})
         rec_getNextParent(session,groups,row.parent_id)
+
+def get_groups(session):
+    res = session.query(Partner).where(Partner.is_group).all()
+    groups=[]
+    for row in res:
+        groups.append({"id":row.id,"name":row.name,"level":row.group_level,"parent":row.parent_id})
+
+
+    rows=[]
+    list_gr=list(filter(lambda x: x["level"] == 1,groups))
+    get_childs(groups,list_gr,rows)
+
+    return  rows
+
+def get_childs(groups,list_gr,rows):
+    for row in list_gr:
+        rows.append(row)
+        parent_id = row["id"]
+        new_list_gr = list(filter(lambda x: x["parent"] == parent_id, groups))
+        get_childs(groups,new_list_gr,rows)

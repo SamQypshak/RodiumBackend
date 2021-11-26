@@ -19,3 +19,8 @@ async def post_clients(items:List[ProductJson]):
 @product_router.get("/products/group_path")
 def get_group_path(id:str):
     return product_controller.get_group_path(session,id)
+
+@product_router.get("/products/groups")
+def products_groups():
+    return  product_controller.get_groups(session)
+

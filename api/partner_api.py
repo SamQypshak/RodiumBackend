@@ -19,3 +19,7 @@ async def post_clients(clients:List[ClientJson]):
 @partner_router.get("/partners/group_path")
 def get_group_path(id:str):
     return client_controller.get_group_path(session,id)
+
+@partner_router.get("/partners/groups")
+def get_group_path():
+    return client_controller.get_groups(session)
