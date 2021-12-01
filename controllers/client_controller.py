@@ -30,7 +30,19 @@ class ClientJson(BaseModel):
     is_supplier:bool
     is_customer:bool
 
+class PartnerContacts(Base):
+    __tablename__ = 'partners_contacts'
+    id=Column(Integer,primary_key=True,autoincrement=True)
+    partner_id = Column(String)
+    type = Column('type', String)
+    field_name = Column('field_name', String)
+    value = Column('value', String)
 
+class PartnerContacts_Json(BaseModel):
+    partner_id: str
+    type :  str
+    field_name : str
+    value : str
 
 def getclients(session,group_id):
     if group_id==None:
@@ -109,8 +121,6 @@ def post_clients(session,clients):
     for client in clients:
        setGroupLevel(session, client.id)
 
-
-
 def get_group_path(session,id):
     res=session.query(Partner).where(Partner.id==id).all()
     a='635550f5-4173-11ec-8a1e-244bfe8d08b5'
@@ -173,3 +183,24 @@ def get_childs(groups,list_gr,rows):
         parent_id = row["id"]
         new_list_gr = list(filter(lambda x: x["parent"] == parent_id, groups))
         get_childs(groups,new_list_gr,rows)
+
+def post_partner_contacts(session,items):
+    deleted=False
+    for item in items:
+       if not deleted:
+         session.query(PartnerContacts).where(PartnerContacts.partner_id==item.partner_id).delete(synchronize_session='fetch')
+         session.commit()
+         deleted=True
+       newrec=PartnerContacts(partner_id=item.partner_id,
+                              type=item.type,
+                              field_name=item.field_name,
+                              value=item.value)
+
+       session.add(newrec)
+       session.commit()
+
+def get_partner_contacts(session,partner_id):
+  if len(partner_id)>0:
+    return session.query(PartnerContacts).where(PartnerContacts.partner_id==partner_id).all()
+  else:
+    return  session.query(PartnerContacts).all()
