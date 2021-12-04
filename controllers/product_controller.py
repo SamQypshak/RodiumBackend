@@ -27,9 +27,6 @@ class ProductJson(BaseModel):
     is_group :bool
 
 
-
-
-
 def get_all(session,group_id):
     if group_id==None:
       rows = session.query(Product).where(Product.group_level==1).all()
