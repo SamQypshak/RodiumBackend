@@ -3,6 +3,7 @@ import uuid
 from pydantic import BaseModel
 from sqlalchemy import Column, String, Boolean, Integer, desc
 
+from controllers.product_unit_controller import Product_Unit
 from database import Base
 
 
@@ -36,8 +37,13 @@ def get_all(session,group_id):
     for row in rows:
         parentrow=session.query(Product).where(row.parent_id==Product.id).all()
         parent_name=""
+        unit_name=""
         if len(parentrow)>0:
             parent_name=parentrow[0].name
+        if len(row.main_unit_id) > 0:
+            units = session.query(Product_Unit).where(row.main_unit_id == Product_Unit.id).all()
+            if len(units)>0:
+              unit_name = units[0].name
         mass.append({"id": row.id,
                      "code": row.code,
                      "name": row.name,
@@ -45,7 +51,8 @@ def get_all(session,group_id):
                      "main_unit_id": row.main_unit_id,
                      "is_group": row.is_group,
                      "parent_id": row.parent_id,
-                     "parent_name": parent_name
+                     "parent_name": parent_name,
+                     "main_unit_name": unit_name
                      })
     return mass
 
